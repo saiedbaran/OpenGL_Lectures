@@ -12,14 +12,20 @@
 #include <glm/gtc/type_ptr.hpp>
 
 // windows dimensions
-const GLint Width = 1280, Height = 720;
+const GLint Width = 1600, Height = 1200;
+const float toRadians = 3.1415f / 180.0f;
 
 GLuint VAO, VBO, shader, uniformModel;
 
 bool moveRight = true;
 float triOffset = 0.0f;
 float triMaxOffset = 0.7f;
-float triOffsetStep = 0.005f;
+float triOffsetStep = 0.5f;
+
+float currentAngle = 0;
+float rotationStep = 0.1f;
+
+float PreviousFrameTime = 0;
 
 // Vertex Shader
 static const char* vShader = R"(
@@ -32,7 +38,7 @@ uniform mat4 model;
 
 void main()
 {
-    gl_Position = model * vec4( 0.4f * pos.x, 0.4f * pos.y, pos.z, 1.0);
+    gl_Position = model * vec4( pos, 1.0);
 }
 )";
 
@@ -192,29 +198,32 @@ int main()
     CreateTriangle();
     CompileShader();
 
-    glm::mat4 testMat = glm::mat4(1);
-    std::cout << glm::to_string(testMat) << std::endl;
-
-
     // Loop until window closed
     while (!glfwWindowShouldClose(mainWindow))
     {
         // Get + Handle user input events
         glfwPollEvents();
 
+        float deltaTime = 0;
+        deltaTime = glfwGetTime() - PreviousFrameTime;
+        PreviousFrameTime = glfwGetTime();
+
         if (moveRight)
         {
-            triOffset += triOffsetStep;
+            triOffset += triOffsetStep * deltaTime;
         }
         else
         {
-            triOffset -= triOffsetStep;
+            triOffset -= triOffsetStep * deltaTime;
         }
 
         if (std::abs(triOffset) >= triMaxOffset) { moveRight = !moveRight; }
 
+        currentAngle += rotationStep;
+        if (currentAngle >= 360) { currentAngle = 0; }
+
         // Clear window
-        glClearColor(0.5f, 0.0f, 0.1f, 1);
+        glClearColor(0.0f, 0.0f, 0.0f, 1);
         glClear(GL_COLOR_BUFFER_BIT);
 
         glUseProgram(shader);
@@ -222,7 +231,9 @@ int main()
         // identity matrix 4x4
         glm::mat4 model = glm::mat4(1);
         // translate model by triOffset in X direction
-        model = glm::translate(model, glm::vec3(triOffset, 0,0));
+        model = glm::translate(model, glm::vec3(triOffset, 0, 0));
+        model = glm::rotate(model, currentAngle * toRadians, glm::vec3(0, 0, 1));
+        model = glm::scale(model, glm::vec3(0.4,0.4,1));
 
         // create Uniform matrix 4x4
         glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model));
