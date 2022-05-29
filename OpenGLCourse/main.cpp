@@ -1,11 +1,13 @@
 ﻿#include <complex>
 #include <cstdio>
 #include <cstring>
+#include <iostream>
 
 #include <GL/glew.h>
 #include <GLFW/glfw3.h>
 
 #include <glm/glm.hpp>
+#include <glm/gtx/string_cast.hpp>
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtc/type_ptr.hpp>
 
@@ -30,7 +32,7 @@ uniform mat4 model;
 
 void main()
 {
-    gl_Position = model * vec4( 0.4 * pos.x, 0.4 * pos.y, pos.z, 1.0);
+    gl_Position = model * vec4( 0.4f * pos.x, 0.4f * pos.y, pos.z, 1.0);
 }
 )";
 
@@ -190,6 +192,10 @@ int main()
     CreateTriangle();
     CompileShader();
 
+    glm::mat4 testMat = glm::mat4(1);
+    std::cout << glm::to_string(testMat) << std::endl;
+
+
     // Loop until window closed
     while (!glfwWindowShouldClose(mainWindow))
     {
@@ -214,7 +220,7 @@ int main()
         glUseProgram(shader);
 
         // identity matrix 4x4
-        glm::mat4 model;
+        glm::mat4 model = glm::mat4(1);
         // translate model by triOffset in X direction
         model = glm::translate(model, glm::vec3(triOffset, 0,0));
 
