@@ -109,7 +109,7 @@
       <PreprocessorDefinitions>_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
-      <AdditionalIncludeDirectories>$(SolutionDir)/External_Libs/GLEW/include;$(SolutionDir)/External_Libs/GLFW/include</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)/External_Libs/GLEW/include;$(SolutionDir)/External_Libs/GLFW/include;$(SolutionDir)/External_Libs/GLM</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
