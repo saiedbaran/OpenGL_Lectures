@@ -36,9 +36,12 @@ layout (location = 0) in vec3 pos;
 
 uniform mat4 model;
 
+out vec4 vCol;
+
 void main()
 {
     gl_Position = model * vec4( pos, 1.0);
+    vCol = vec4(clamp(pos, 0.0f,1.0f), 1.0f);
 }
 )";
 
@@ -47,11 +50,13 @@ static const char* fShader = R"(
 
 #version 330
 
+in vec4 vCol;
+
 out vec4 colour;
 
 void main()
 {
-    colour = vec4(0.0,1.0,0.0,1.0);
+    colour = vCol;
 }
 )";
 
@@ -231,8 +236,8 @@ int main()
         // identity matrix 4x4
         glm::mat4 model = glm::mat4(1);
         // translate model by triOffset in X direction
-        model = glm::translate(model, glm::vec3(triOffset, 0, 0));
-        model = glm::rotate(model, currentAngle * toRadians, glm::vec3(0, 0, 1));
+        // model = glm::translate(model, glm::vec3(triOffset, 0, 0));
+        // model = glm::rotate(model, currentAngle * toRadians, glm::vec3(0, 0, 1));
         model = glm::scale(model, glm::vec3(0.4,0.4,1));
 
         // create Uniform matrix 4x4
