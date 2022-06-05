@@ -15,7 +15,7 @@
 const GLint Width = 1600, Height = 1200;
 const float toRadians = 3.1415f / 180.0f;
 
-GLuint VAO, VBO, shader, uniformModel;
+GLuint VAO, VBO, IBO, shader, uniformModel, uniformProjection;
 
 bool moveRight = true;
 float triOffset = 0.0f;
@@ -35,12 +35,13 @@ static const char* vShader = R"(
 layout (location = 0) in vec3 pos;
 
 uniform mat4 model;
+uniform mat4 projection;
 
 out vec4 vCol;
 
 void main()
 {
-    gl_Position = model * vec4( pos, 1.0);
+    gl_Position = projection * model * vec4( pos, 1.0);
     vCol = vec4(clamp(pos, 0.0f,1.0f), 1.0f);
 }
 )";
@@ -122,13 +123,22 @@ void CompileShader()
     }
 
     uniformModel = glGetUniformLocation(shader, "model");
+    uniformProjection = glGetUniformLocation(shader, "projection");
 }
 
 
 void CreateTriangle()
 {
+    unsigned int indices[] = {
+        0, 3, 1,
+        1, 3, 2,
+        2, 3, 0,
+        0, 1, 2
+    };
+
     GLfloat vertices[] = {
         -1, -1, 0,
+        0, -1, 1,
         1, -1, 0,
         0, 1, 0
     };
@@ -136,9 +146,12 @@ void CreateTriangle()
     glGenVertexArrays(1, &VAO);
     glBindVertexArray(VAO);
 
+    glGenBuffers(1, &IBO);
+    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, IBO);
+    glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indices), indices, GL_STATIC_DRAW);
+
     glGenBuffers(1, &VBO);
     glBindBuffer(GL_ARRAY_BUFFER, VBO);
-
     glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
 
     glVertexAttribPointer(0, 3,GL_FLOAT, GL_FALSE, 0, 0);
@@ -147,6 +160,8 @@ void CreateTriangle()
     glBindBuffer(GL_ARRAY_BUFFER, 0);
 
     glBindVertexArray(0);
+
+    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
 }
 
 int main()
@@ -197,11 +212,17 @@ int main()
         return 1;
     }
 
+    glEnable(GL_DEPTH_TEST);
+
     // Setup Viewport size
     glViewport(0, 0, bufferWidth, bufferHeight);
 
     CreateTriangle();
     CompileShader();
+
+    glm::mat4 projection = glm::perspective(
+        45.0f, (GLfloat)bufferWidth / (GLfloat)bufferHeight, 0.3f, 100.0f
+        );
 
     // Loop until window closed
     while (!glfwWindowShouldClose(mainWindow))
@@ -229,22 +250,32 @@ int main()
 
         // Clear window
         glClearColor(0.0f, 0.0f, 0.0f, 1);
-        glClear(GL_COLOR_BUFFER_BIT);
+        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
         glUseProgram(shader);
 
         // identity matrix 4x4
         glm::mat4 model = glm::mat4(1);
         // translate model by triOffset in X direction
-        // model = glm::translate(model, glm::vec3(triOffset, 0, 0));
-        // model = glm::rotate(model, currentAngle * toRadians, glm::vec3(0, 0, 1));
-        model = glm::scale(model, glm::vec3(0.4,0.4,1));
+        model = glm::translate(model, glm::vec3(0, 0, -3));
+        model = glm::rotate(model, currentAngle * toRadians, glm::vec3(0, 1, 0));
+        model = glm::scale(model, glm::vec3(0.4, 0.4, 1));
 
         // create Uniform matrix 4x4
         glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model));
 
+        // create Uniform matrix 4x4 for projection
+        glUniformMatrix4fv(uniformProjection, 1, GL_FALSE, value_ptr(projection));
+
         glBindVertexArray(VAO);
-        glDrawArrays(GL_TRIANGLES, 0, 3);
+
+        //** Draw Triangles by vertex
+        // glDrawArrays(GL_TRIANGLES, 0, 3);
+
+        glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, IBO);
+        glDrawElements(GL_TRIANGLES, 12, GL_UNSIGNED_INT, 0);
+        glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
+
         glBindVertexArray(0);
         glUseProgram(0);
 
