@@ -25,8 +25,8 @@ std::vector<Mesh> meshList;
 std::vector<Shader> shaderList;
 
 // path to shaders
-static const char* vShader = "C:/Users/ssafi/Documents/Repositories/OpenGL_Lectures/OpenGLCourse/Shaders/vShader.vert";
-static const char* fShader = "C:/Users/ssafi/Documents/Repositories/OpenGL_Lectures/OpenGLCourse/Shaders/fShader.frag";
+static const char* vShader = "./Shaders/vShader.vert";
+static const char* fShader = "./Shaders/fShader.frag";
 
 bool moveRight = true;
 float triOffset = 0.0f;
