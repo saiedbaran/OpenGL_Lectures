@@ -18,9 +18,20 @@ public:
     bool getShouldClose() { return glfwWindowShouldClose(mainWindow); }
     void swapBuffers() { glfwSwapBuffers(mainWindow); }
 
+    bool invertMouseY = true;
+    
     ~Window();
 private:
     GLFWwindow* mainWindow;
     GLint width, height;
     GLint bufferWidth, bufferHeight;
+
+    bool keys[1024];
+
+    GLfloat lastX, lastY, deltaX, deltaY;
+    bool isFirstMouseMovement = true;
+
+    void createCallbacks();
+    static void handleKeys(GLFWwindow* window, int key, int code, int action, int mode);
+    static void handleMouse(GLFWwindow* window, double xPos, double yPos);
 };
