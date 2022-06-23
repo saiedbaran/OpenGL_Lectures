@@ -15,6 +15,7 @@
 #include "Classes/Mesh.h"
 #include "Classes/Shader.h"
 #include "Classes/Window.h"
+#include "Classes/Camera.h"
 
 // windows dimensions
 const GLint Width = 1600, Height = 1200;
@@ -23,6 +24,7 @@ const float toRadians = 3.1415f / 180.0f;
 Window mainWindow;
 std::vector<Mesh> meshList;
 std::vector<Shader> shaderList;
+Camera camera;
 
 // path to shaders
 static const char* vShader = "./Shaders/vShader.vert";
@@ -72,9 +74,10 @@ int main()
 
     CreateObject();
     CreateShader();
+    camera = Camera(glm::vec3(0));
 
 
-    GLuint uniformModel, uniformProjection;
+    GLuint uniformModel = 0, uniformProjection = 0, uniformView = 0;
     glm::mat4 projection = glm::perspective(
         45.0f,
         (GLfloat)mainWindow.getBufferWidth() / (GLfloat)mainWindow.getBufferHeight(),
@@ -84,9 +87,6 @@ int main()
     // Loop until window closed
     while (!mainWindow.getShouldClose())
     {
-        // Get + Handle user input events
-        glfwPollEvents();
-
         float deltaTime = 0;
         deltaTime = glfwGetTime() - PreviousFrameTime;
         PreviousFrameTime = glfwGetTime();
@@ -99,11 +99,18 @@ int main()
         {
             triOffset -= triOffsetStep * deltaTime;
         }
+        
+        // Get + Handle user input events
+        glfwPollEvents();
+
+        // Camera key control
+        camera.keyControl(mainWindow.getkeys(), deltaTime);
 
         if (std::abs(triOffset) >= triMaxOffset) { moveRight = !moveRight; }
 
         currentAngle += rotationStep;
         if (currentAngle >= 360) { currentAngle = 0; }
+        
 
         // Clear window
         glClearColor(0.0f, 0.0f, 0.0f, 1);
@@ -112,6 +119,7 @@ int main()
         shaderList[0].UseShader();
         uniformModel = shaderList[0].GetModelLocation();
         uniformProjection = shaderList[0].GetProjectionLocation();
+        uniformView = shaderList[0].GetViewLocation();
         
         // identity matrix 4x4
         glm::mat4 model = glm::mat4(1);
@@ -124,7 +132,10 @@ int main()
         glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model));
 
         // create Uniform matrix 4x4 for projection
-        glUniformMatrix4fv(uniformProjection, 1, GL_FALSE, value_ptr(projection));
+        glUniformMatrix4fv(uniformProjection, 1, GL_FALSE, glm::value_ptr(projection));
+
+        // Uniform view
+        glUniformMatrix4fv(uniformView, 1, GL_FALSE, glm::value_ptr(camera.calculateViewMatrix()));
 
         meshList[0].RenderMesh();
 

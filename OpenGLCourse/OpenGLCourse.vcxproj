@@ -157,12 +157,14 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="Classes\Camera.cpp" />
     <ClCompile Include="Classes\Mesh.cpp" />
     <ClCompile Include="Classes\Shader.cpp" />
     <ClCompile Include="Classes\Window.cpp" />
     <ClCompile Include="main.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Classes\Camera.h" />
     <ClInclude Include="Classes\Mesh.h" />
     <ClInclude Include="Classes\Shader.h" />
     <ClInclude Include="Classes\Window.h" />
