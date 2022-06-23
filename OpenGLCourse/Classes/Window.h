@@ -16,6 +16,12 @@ public:
     GLint getBufferWidth() { return bufferWidth; }
     GLint getBufferHeight() { return bufferHeight; }
     bool getShouldClose() { return glfwWindowShouldClose(mainWindow); }
+
+    bool* getkeys() {return keys;}
+
+    GLfloat get_change_x();
+    GLfloat getChangeY();
+    
     void swapBuffers() { glfwSwapBuffers(mainWindow); }
 
     bool invertMouseY = true;

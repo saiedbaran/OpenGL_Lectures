@@ -61,6 +61,7 @@ int Window::initialize()
 
     // Handle key and mouse input
     createCallbacks();
+    glfwSetInputMode(mainWindow, GLFW_CURSOR, GLFW_CURSOR_HIDDEN); // Disabling cursor visualization in viewport
 
     glewExperimental = GLU_TRUE;
 
@@ -81,6 +82,20 @@ int Window::initialize()
     glfwSetWindowUserPointer(mainWindow, this);
 
     return 0;
+}
+
+GLfloat Window::get_change_x()
+{
+    const GLfloat currentChange = deltaX;
+    deltaX = 0;
+    return currentChange;
+}
+
+GLfloat Window::getChangeY()
+{
+    const GLfloat currentChange = deltaY;
+    deltaY = 0;
+    return currentChange;
 }
 
 Window::~Window()
@@ -137,5 +152,5 @@ void Window::handleMouse(GLFWwindow* window, double xPos, double yPos)
     theWindow->lastX = xPos;
     theWindow->lastY = yPos;
 
-    printf("x: %.3f, y: %.3f \n", theWindow->deltaX, theWindow->deltaY);
+    // printf("x: %.3f, y: %.3f \n", theWindow->deltaX, theWindow->deltaY);
 }
