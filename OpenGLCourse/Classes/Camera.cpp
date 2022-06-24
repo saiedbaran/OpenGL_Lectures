@@ -41,6 +41,28 @@ void Camera::keyControl(bool* keys, GLfloat deltaTime)
     {
         position -= right * moveSpeed * deltaTime;
     }
+    if (keys[GLFW_KEY_E])
+    {
+        position += worldUp * moveSpeed * deltaTime;
+    }
+    if (keys[GLFW_KEY_Q])
+    {
+        position -= worldUp * moveSpeed * deltaTime;
+    }
+}
+
+void Camera::mouseControl(GLfloat deltaX, GLfloat deltaY)
+{
+    deltaX *= turnRate;
+    deltaY *= turnRate;
+
+    yaw += deltaX;
+    pitch += deltaY;
+
+    if (yaw > 89.0f) { yaw = 89.0f; }
+    if (yaw < -89.0f) { yaw = -89.0f; }
+
+    update();
 }
 
 glm::mat4 Camera::calculateViewMatrix(bool hasTarget, glm::vec3 targetPosition)

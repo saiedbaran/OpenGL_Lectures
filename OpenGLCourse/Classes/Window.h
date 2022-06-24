@@ -19,7 +19,7 @@ public:
 
     bool* getkeys() {return keys;}
 
-    GLfloat get_change_x();
+    GLfloat getChangeX();
     GLfloat getChangeY();
     
     void swapBuffers() { glfwSwapBuffers(mainWindow); }

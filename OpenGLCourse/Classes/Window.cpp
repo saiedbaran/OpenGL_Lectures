@@ -2,8 +2,8 @@
 
 Window::Window()
 {
-    width = 800;
-    height = 600;
+    width = 1920;
+    height = 1080;
     bufferWidth = 0, bufferHeight = 0;
     mainWindow = 0;
 
@@ -84,7 +84,7 @@ int Window::initialize()
     return 0;
 }
 
-GLfloat Window::get_change_x()
+GLfloat Window::getChangeX()
 {
     const GLfloat currentChange = deltaX;
     deltaX = 0;

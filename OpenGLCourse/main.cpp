@@ -103,8 +103,9 @@ int main()
         // Get + Handle user input events
         glfwPollEvents();
 
-        // Camera key control
+        // Camera key/mouse control
         camera.keyControl(mainWindow.getkeys(), deltaTime);
+        camera.mouseControl(mainWindow.getChangeX(), mainWindow.getChangeY());
 
         if (std::abs(triOffset) >= triMaxOffset) { moveRight = !moveRight; }
 
